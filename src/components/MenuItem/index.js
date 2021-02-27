@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	StyleSheet,
 	Text,
@@ -10,9 +10,13 @@ import { colors } from "../../utils";
 
 import { Ionicons } from "@expo/vector-icons";
 
-const MenuItem = ({ item }) => {
+import { connect } from "react-redux";
+
+import { addItem } from "../../redux/actions/cart.action";
+
+const MenuItem = ({ item, addItem, onPress }) => {
 	return (
-		<TouchableOpacity style={{ flex: 1 }}>
+		<TouchableOpacity style={{ flex: 1 }} onPress={onPress}>
 			<ImageBackground
 				source={{ uri: item.imageUri }}
 				style={{
@@ -73,7 +77,16 @@ const MenuItem = ({ item }) => {
 	);
 };
 
-export default MenuItem;
+const mapStateToProps = (state) => {
+	const { carts } = state;
+	return { carts };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+	addItem: (item) => dispatch(addItem(item)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MenuItem);
 
 const styles = StyleSheet.create({
 	buttonStyle: {

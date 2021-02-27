@@ -6,75 +6,18 @@ import {
 	View,
 	FlatList,
 	TouchableOpacity,
+	SafeAreaView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { HistoryItem } from "../../components";
 import { colors } from "../../utils";
 
-const Checkout = () => {
+import { connect } from "react-redux";
+
+const Checkout = ({ carts }) => {
 	const [isLoading, setLoading] = useState(true);
-	const [data, setData] = useState([]);
 	useEffect(() => {
 		setTimeout(() => {
 			setLoading(false);
-			setData([
-				{
-					_id: "6033bb62b91d8d6c526f24e2",
-					price: "$1,810.59",
-					picture: "http://placehold.it/32x32",
-					quantity: 6,
-					menuName: "Fernandez",
-				},
-				{
-					_id: "6033bb623ee1de7f4938b5b1",
-					price: "$2,761.52",
-					picture: "http://placehold.it/32x32",
-					quantity: 5,
-					menuName: "Mercedes",
-				},
-				{
-					_id: "6033bb6228040cd71fdb5dd2",
-					price: "$2,169.26",
-					picture: "http://placehold.it/32x32",
-					quantity: 5,
-					menuName: "Garner",
-				},
-				{
-					_id: "6033bb62540d9b78b1e9690e",
-					price: "$3,070.71",
-					picture: "http://placehold.it/32x32",
-					quantity: 6,
-					menuName: "Wright",
-				},
-				{
-					_id: "6033bb62722b558d0b76cc9a",
-					price: "$1,158.58",
-					picture: "http://placehold.it/32x32",
-					quantity: 2,
-					menuName: "Colette",
-				},
-				{
-					_id: "6033bb621fb7dc1fbbc24269",
-					price: "$1,044.87",
-					picture: "http://placehold.it/32x32",
-					quantity: 3,
-					menuName: "Lou",
-				},
-				{
-					_id: "6033bb6280f08cfe4b023c98",
-					price: "$3,867.64",
-					picture: "http://placehold.it/32x32",
-					quantity: 3,
-					menuName: "Nadine",
-				},
-				{
-					_id: "6033bb6265c8abfc582d172e",
-					price: "$2,201.33",
-					picture: "http://placehold.it/32x32",
-					quantity: 10,
-					menuName: "Katrina",
-				},
-			]);
 		}, 3000);
 	});
 
@@ -92,29 +35,47 @@ const Checkout = () => {
 		);
 	} else {
 		return (
-			<View style={styles.container}>
+			<SafeAreaView style={{ flex: 1 }}>
 				<View
 					style={{
-						backgroundColor: "white",
-						height: 225,
-						borderRadius: 5,
-						padding: 5,
+						flex: 4,
 					}}
 				>
-					<Text>Container Item</Text>
+					<FlatList
+						showsVerticalScrollIndicator={false}
+						data={carts.selected}
+						keyExtractor={(item) => item.id}
+						key={({ item, index }) => item.id}
+						renderItem={({ item, index }) => (
+							<HistoryItem item={item} key={index} />
+						)}
+					/>
 				</View>
 				<View
 					style={{
+						flex: 1,
+						justifyContent: "center",
+						paddingHorizontal: 16,
 						backgroundColor: "white",
-						height: 75,
-						borderRadius: 5,
-						padding: 5,
-						marginVertical: 8,
+						borderTopRightRadius: 8,
+						borderTopLeftRadius: 8,
+						elevation: 16,
 					}}
 				>
-					<Text>Container Item</Text>
-				</View>
-				<View style={{ paddingVertical: 8 }}>
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+							marginBottom: 8,
+						}}
+					>
+						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
+							Total Harga
+						</Text>
+						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
+							Rp. {carts.totalPrice}
+						</Text>
+					</View>
 					<TouchableOpacity
 						style={{
 							backgroundColor: colors.secondaryColor,
@@ -130,35 +91,16 @@ const Checkout = () => {
 						</Text>
 					</TouchableOpacity>
 				</View>
-				{/* <FlatList
-					ListEmptyComponent={() => (
-						<View
-							style={{
-								flex: 1,
-								justifyContent: "center",
-								alignItems: "center",
-							}}
-						>
-							<Ionicons name="file-tray-outline" size={45} />
-							<Text style={{ fontSize: 24 }}>No Data</Text>
-						</View>
-					)}
-					data={data}
-					keyExtractor={(item) => item.id}
-					renderItem={({ item, index }) => (
-						<HistoryItem item={item} key={index} />
-					)}
-				/> */}
-			</View>
+			</SafeAreaView>
 		);
 	}
 };
 
-export default Checkout;
+const mapStateToProps = (state) => {
+	const { carts } = state;
+	return { carts };
+};
 
-const styles = StyleSheet.create({
-	container: {
-		padding: 16,
-		flex: 1,
-	},
-});
+export default connect(mapStateToProps)(Checkout);
+
+const styles = StyleSheet.create({});

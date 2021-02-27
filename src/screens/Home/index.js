@@ -1,119 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	StyleSheet,
 	TouchableOpacity,
 	View,
 	Text,
 	ScrollView,
-	FlatList,
-	ImageBackground,
+	Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-import { FavoriteItem, MenuItem } from "../../components";
+import { FavoriteItem, MenuItem, BottomSheetModal } from "../../components";
 import { colors } from "../../utils";
 
-const Home = ({ navigation }) => {
-	const itemSelected = (item) => {
-		alert(item.title);
-	};
+import { connect } from "react-redux";
 
-	const items = [
-		{
-			id: 0,
-			title: "Sate Taichan",
-			price: 12500,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 1,
-			title: "Martabak",
-			price: 22500,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 2,
-			title: "Karaoket",
-			price: 5000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 3,
-			title: "Sop Buah",
-			price: 15000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 4,
-			title: "Jus Mangga",
-			price: 10000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-	];
+import MenuSection from "./menu.home";
+import FavoriteSection from "./favorite.home";
 
-	const itemsAll = [
-		{
-			id: 5,
-			title: "Sate Taichan",
-			price: 12500,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 6,
-			title: "Martabak",
-			price: 22500,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 7,
-			title: "Karaoket",
-			price: 5000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 8,
-			title: "Sop Buah",
-			price: 15000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 9,
-			title: "Jus Mangga",
-			price: 10000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 10,
-			title: "Sate Taichan",
-			price: 12500,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 11,
-			title: "Martabak",
-			price: 22500,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 12,
-			title: "Karaoket",
-			price: 5000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 13,
-			title: "Sop Buah",
-			price: 15000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-		{
-			id: 14,
-			title: "Jus Mangga",
-			price: 10000,
-			imageUri: "https://picsum.photos/100/100",
-		},
-	];
+const Home = ({ navigation, carts }) => {
+	const [visible, setVisible] = useState(true);
+
+	const HEIGHT = Dimensions.get("screen").height;
+	const WIDTH = Dimensions.get("screen").width;
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -126,7 +35,7 @@ const Home = ({ navigation }) => {
 					>
 						<View style={styles.badgesItem}>
 							<Text style={{ color: "white", fontSize: 10 }}>
-								1
+								{carts.selected.length}
 							</Text>
 						</View>
 						<Ionicons name="basket-outline" size={26} />
@@ -134,41 +43,7 @@ const Home = ({ navigation }) => {
 				</View>
 
 				{/* Menu Favorite */}
-				<View style={styles.favoriteContainer}>
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							marginBottom: 16,
-						}}
-					>
-						<Ionicons name="heart" size={18} />
-						<Text
-							style={{
-								fontWeight: "bold",
-								fontSize: 22,
-								marginLeft: 8,
-							}}
-						>
-							Menu Favorit
-						</Text>
-					</View>
-					<FlatList
-						style={{ marginLeft: 0 }}
-						data={items}
-						renderItem={({ item, index }) => (
-							<FavoriteItem
-								titleMenu={item.title}
-								imageUri={{ uri: item.imageUri }}
-								priceMenu={item.price}
-								key={index}
-							/>
-						)}
-						keyExtractor={(item) => item.id}
-						horizontal={true}
-						showsHorizontalScrollIndicator={false}
-					/>
-				</View>
+				<FavoriteSection />
 
 				{/* Navigation Item */}
 				<View style={styles.sectionNavigationMenu}>
@@ -206,23 +81,39 @@ const Home = ({ navigation }) => {
 				</View>
 
 				{/* List Menu */}
-				<View style={{ paddingHorizontal: 18 }}>
-					<FlatList
-						numColumns={2}
-						data={itemsAll}
-						keyExtractor={(item) => item.id}
-						renderItem={({ item, index }) => (
-							<MenuItem item={item} key={index} />
-						)}
-						showsVerticalScrollIndicator={false}
-					/>
-				</View>
+				{/* <MenuSection /> */}
 			</ScrollView>
+
+			<BottomSheetModal
+				displayModal={visible}
+				closeModal={() => setVisible(false)}
+			>
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: "#000000AA",
+						justifyContent: "flex-end",
+					}}
+				>
+					
+					<Text>{HEIGHT}</Text>
+					<Text>{WIDTH}</Text>
+				</View>
+			</BottomSheetModal>
 		</SafeAreaView>
 	);
 };
 
-export default Home;
+const mapStateToProps = (state) => {
+	const { carts } = state;
+	return { carts };
+};
+
+const addItemToCart = (item) => {
+	console.log(item);
+};
+
+export default connect(mapStateToProps)(Home);
 
 const styles = StyleSheet.create({
 	headerContainer: {

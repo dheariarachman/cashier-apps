@@ -29,7 +29,7 @@ const BottomTab = () => {
 
 const index = () => {
 	return (
-		<Stack.Navigator initialRouteName="Checkout">
+		<Stack.Navigator initialRouteName="ContainerApp">
 			<Stack.Screen
 				name="ContainerApp"
 				component={BottomTab}
